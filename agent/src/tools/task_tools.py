@@ -3,6 +3,7 @@ from typing import Any, TypedDict
 from langchain.agents import create_agent
 from langchain_core.tools import BaseTool, tool
 
+from config import AGENT_RECURSION_LIMIT
 from graph.state import SubAgentType
 from tools.description import TASK_DESCRIPTION_PREFIX
 
@@ -21,7 +22,6 @@ DEFAULT_SUBAGENTS: list[SubAgentSpec] = [
     {"name": "dedup-agent", "description": "중복 제거와 dedup_papers 산출"},
     {"name": "relevance-agent", "description": "관련도 점수화와 scored_papers 산출"},
     {"name": "summarizer-agent", "description": "논문 요약과 summaries 산출"},
-    {"name": "notion-agent", "description": "최종 결과 저장 및 Notion export"},
 ]
 
 
@@ -40,10 +40,12 @@ def _extract_result_text(result: dict[str, Any]) -> str:
     last_message = messages[-1]
     content = getattr(last_message, "content", None)
     if isinstance(content, str):
-        return content
+        return content[:4000] + ("... [truncated]" if len(content) > 4000 else "")
     if isinstance(last_message, dict):
-        return str(last_message.get("content", last_message))
-    return str(last_message)
+        text = str(last_message.get("content", last_message))
+        return text[:4000] + ("... [truncated]" if len(text) > 4000 else "")
+    text = str(last_message)
+    return text[:4000] + ("... [truncated]" if len(text) > 4000 else "")
 
 
 def create_task_tool(
@@ -98,7 +100,10 @@ def create_task_tool(
             "instruction": description,
             "subagent_type": subagent_type,
         }
-        result = sub_agent.invoke(isolated_state)
+        result = sub_agent.invoke(
+            isolated_state,
+            config={"recursion_limit": AGENT_RECURSION_LIMIT},
+        )
         return _extract_result_text(result)
 
     return configured_task

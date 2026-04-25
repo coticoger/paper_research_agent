@@ -22,4 +22,11 @@ If the query is ambiguous:
 
 If the query is clear enough:
 - set approved_topics
+
+Return only a single JSON object with:
+- candidate_topics
+- ambiguity_score
+- needs_user_clarification
+- clarification_question if needed
+- approved_topics only when the user already selected or clearly specified topics
 """

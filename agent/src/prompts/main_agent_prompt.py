@@ -46,7 +46,6 @@ Allowed subagent_type values:
 - "dedup-agent": removes duplicate papers
 - "relevance-agent": scores paper relevance
 - "summarizer-agent": summarizes selected papers
-- "notion-agent": exports final results
 
 3. **ls / read_file / write_file**
 Inspect and manage workspace files.
@@ -67,7 +66,8 @@ Use task to delegate paper search to research-agent.
 The research-agent should use academic search tools and write results to raw_papers.jsonl.
 
 3. **Collect**
-Use ls and read_file to verify that raw_papers.jsonl exists and contains usable results.
+Use ls or small log files to verify that raw_papers.jsonl exists.
+Do not read large JSONL files into the agent context.
 
 4. **Delegate Dedup**
 Use task to delegate duplicate removal to dedup-agent.
@@ -79,11 +79,13 @@ The relevance-agent should write scored_papers.jsonl.
 
 6. **Delegate Summarization**
 Use task to delegate summarization to summarizer-agent.
-The summarizer-agent should write summaries.jsonl.
+The summarizer-agent should summarize only papers with relevance_score >= 0.7 and write summaries.jsonl.
+Summaries should be based on the paper abstract, introduction, method, and discussion sections
+when those sections are available.
 
-7. **Delegate Export**
-Use task to delegate final export to notion-agent.
-The notion-agent should write final_results.json and export to Notion if configured.
+7. **Delegate Finalization**
+Use task to delegate final result generation to summarizer-agent.
+The summarizer-agent should read summaries.jsonl and write final_results.json from those summaries.
 
 8. **Complete**
 Mark all TODOs as completed.
@@ -132,13 +134,13 @@ Expected workspace files:
 
 Before delegating a stage, check whether the required input file exists.
 After delegating a stage, verify that the expected output file exists.
+Never inspect large JSONL contents with read_file unless the user explicitly asks for it.
 </File Contract>
 
 <Stopping Criteria>
 Stop when:
 - enough relevant papers have been summarized
 - final_results.json exists
-- Notion export has completed or has been explicitly skipped
 
 Do not over-search once the paper count and quality criteria are satisfied.
 </Stopping Criteria>

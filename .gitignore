@@ -14,3 +14,7 @@ env/
 # Project runtime artifacts
 agent/src/memory/
 *.jsonl
+
+.DS_Store
+
+memory

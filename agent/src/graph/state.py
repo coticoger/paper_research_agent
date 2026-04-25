@@ -13,6 +13,10 @@ from schemas.todo import Todo
 class MainAgentState(TypedDict, total=False):
     messages: Annotated[list[BaseMessage], add_messages]
     user_query: str
+    run_started_at: float
+    validation_iter: int
+    topic_retry_requested: bool
+    pipeline_status: dict
     topic_expansion: TopicExpansionResult
     approved_topics: list[Topic]
     search_scope: str

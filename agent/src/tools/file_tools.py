@@ -44,7 +44,10 @@ def read_file(path : str, offset : int = 0, limit : int = 2000) -> str:
         lines = content.splitlines()
         end_idx = min(offset + limit, len(lines))
         result_lines = [f"{i+1:6d}\t{lines[i][:2000]}" for i in range(offset, end_idx)]
-        return "\n".join(result_lines)
+        result = "\n".join(result_lines)
+        if len(result) > 12000:
+            return result[:12000].rstrip() + "\n... [truncated]"
+        return result
     except Exception as e:
         return f"[Warninig] 파일 읽기 실패 - {e}"
     
