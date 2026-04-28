@@ -13,3 +13,6 @@ COMMIT_MODELS = {
     "commit-agent" : {"model" : "openai:gpt-4o-mini", "temperature" : 0.7}
 }
 
+PAPER_ANALYSIS_MODELS = {
+    "inspector-agent" : {"model" : "openai:gpt-4o-mini", "temperature":0.0},
+}
