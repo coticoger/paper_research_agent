@@ -1,5 +1,6 @@
 # pdf가 실제로 읽히는지 확인하고, 전체 구조를 파악
 import json
+from pathlib import Path
 from langchain.chat_models import init_chat_model
 from langchain.agents import create_agent
 from config import PAPER_ANALYSIS_MODELS
@@ -28,6 +29,43 @@ agent = create_agent(
     )
 )
 
+MEMORY_DIR = Path(__file__).resolve().parents[2] / "memory"
+
+
+def _extract_json_object(content: str) -> dict:
+    content = content.strip()
+
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        pass
+
+    if "```json" in content:
+        content = content.split("```json", 1)[1]
+    if "```" in content:
+        content = content.split("```", 1)[0]
+    content = content.strip()
+
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        pass
+
+    start = content.find("{")
+    end = content.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        return json.loads(content[start : end + 1])
+
+    raise json.JSONDecodeError("No JSON object found", content, 0)
+
+
+def _load_saved_inspection(path: str) -> dict | None:
+    target = (MEMORY_DIR / path / "pdf_inspection.json").resolve()
+    if not target.exists():
+        return None
+
+    return json.loads(target.read_text(encoding="utf-8"))
+
 def inspector_agent(state : AgentState) -> Command:
     print(f"🔍 inspector agent로 논문 분석을 시작합니다\n")
     plans = state.get("plans","")
@@ -39,7 +77,18 @@ def inspector_agent(state : AgentState) -> Command:
     })
 
     content = result["messages"][-1].content
-    parsed = json.loads(content)
+    saved_inspection = _load_saved_inspection(path)
+
+    if saved_inspection is not None:
+        parsed = saved_inspection
+    else:
+        try:
+            parsed = _extract_json_object(content)
+        except json.JSONDecodeError as e:
+            print("❌ inspector_agent JSON parse 실패")
+            print(f"error: {e}")
+            print(content[:2000])
+            raise
 
     return Command(
         update = {

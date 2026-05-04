@@ -51,7 +51,7 @@ def paper_search_review(state : AgentState) -> Command:
 def paper_analysis_review(state : AgentState) -> Command:
     print(f"현재 분석 계획\n {state["plans"]}")
     
-    choice = input(""" 1. 수정하기 \n 2. plan 제거 \n 3. 그대로 진행""").strip()
+    choice = input(""" 1. 수정하기 \n 2. plan 제거 \n 3. 그대로 진행\n""").strip()
 
     if choice == str(1):
         feedback = input("어떤 부분을 수정할까요?: ").strip()

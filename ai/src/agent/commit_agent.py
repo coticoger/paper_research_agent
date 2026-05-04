@@ -104,9 +104,8 @@ def commit_agent(state: AgentState) :
                 "messages": result["messages"],
                 "task": parsed_task,
                 "new_messages": parsed["new_messages"],
-                "pdf_path": parsed["pdf_path"],
+                "pdf_path": state.get("pdf_path") or parsed["pdf_path"],
                 "plans": parsed["plans"],
             },
             goto=next_node,
         )
-
