@@ -1,7 +1,7 @@
 # pdf가 실제로 읽히는지 확인하고, 전체 구조를 파악
 import json
 from langchain.chat_models import init_chat_model
-from langchain.agent import create_agent
+from langchain.agents import create_agent
 from config import PAPER_ANALYSIS_MODELS
 from langgraph.types import Command
 from schemas.agent_state import AgentState

@@ -13,7 +13,7 @@ def router(state: AgentState) -> Command:
         return Command(goto="paper_search_agent")
 
     if task == "paper_analysis":
-        return Command(goto="paper_analysis")
+        return Command(goto="paper_analysis_agent")
 
     if task == "task_paper_search":
         return Command(goto="task_paper_search")

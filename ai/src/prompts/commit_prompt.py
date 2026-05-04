@@ -38,14 +38,14 @@ Output format depends on the selected task.
 Return JSON only. Do not output explanations, markdown, or code fences.
 
 [If task is paper_search]
-{
+{{
   "task": "paper_search",
   "new_messages": "Refined and actionable user request",
   "topics": ["topic1", "topic2", "topic3"]
-}
+}}
 
 [If task is paper_analysis]
-{
+{{
   "task": "paper_analysis",
   "new_messages": "Refined and actionable user request",
   "pdf_path": "Paper file path",
@@ -55,15 +55,15 @@ Return JSON only. Do not output explanations, markdown, or code fences.
     "step 2",
     "step 3"
   ]
-}
+}}
 
 [If task is task_paper_search]
-{
+{{
   "task": "task_paper_search",
   "new_messages": "Refined and actionable user request",
   "task_content": "Task description or file path",
   "topics": ["topic1", "topic2", "topic3"]
-}
+}}
 """
 
 SEARCH_COMMIT_PROMPT = """
@@ -118,7 +118,7 @@ You are an analysis commit agent responsible for revising an existing paper anal
 Your task is to improve and rewrite the previous analysis plan using human feedback as the highest-priority signal.
 
 [Human feedback]
-{humanfeedback}
+{human_feedback}
 
 [Previous plans]
 {plans}
@@ -169,3 +169,4 @@ Important rules:
 - Do not output markdown.
 - Do not output text outside JSON.
 """
+

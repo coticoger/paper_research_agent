@@ -16,7 +16,7 @@ from schemas.agent_state import AgentState
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("query", help="사용자 요청")
-    parser.add_argument("pdf", dest ="pdf_path")
+    parser.add_argument("--pdf", dest="pdf_path", default=None, help="PDF 파일 경로")
     return parser.parse_args()
 
 
